@@ -93,9 +93,14 @@ class Topology(object):
         """
         self.restart_topology_messages()
 
+        keys = self.switches.keys()
+        messages = self.messages
+
         while len(self.messages) > 0:
-            msg = self.messages.pop(0)
-            self.switches[msg.destination].process_message(msg)
+            msg: Message = self.messages.pop(0)
+            # print('>> ', msg.root, msg.distance, msg.origin, msg.destination, msg.pathThrough, msg.ttl)
+
+            self.switches[msg.destination].process_message(msg)            
             if msg.ttl == 0 and not self.drop_complete:
                 for switchId in self.drops:
                     self.drop_switch(switchId)

@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [        
+        {
+            "name": "debug run.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "run.py",
+            "console": "integratedTerminal",
+            "args": [
+                // "${command:pickArgs}"
+                // "NoLoopTopo"
+                // "SimpleLoopTopo"
+                // "Sample"
+                "TailTopo"
+                // "ComplexLoopTopo"
+            ]
+        },
+        // {
+        //     "name": "Python Debugger: Current File with Arguments",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "program": "${file}",
+        //     "console": "integratedTerminal",
+        //     "args": [
+        //         "${command:pickArgs}"
+        //     ]
+        // },
+        // {
+        //     "name": "Python: Run run.py with arguments",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/run_spanning_tree.py",  // Path to your script
+        //     "args": ["jellyfish_topo"],  // Pass the topology file as an argument
+        //     "console": "integratedTerminal",  // Use the integrated terminal for output
+        //     "justMyCode": true  // Debug your code, not dependencies
+        // }
+    ]
+}

@@ -75,7 +75,32 @@ class Switch(StpSwitch):
         super(Switch, self).__init__(idNum, topolink, neighbors)
         # TODO: Define class members to keep track of which links are part of the spanning tree
 
-    def process_message(self, message: Message):
+        self.root = idNum
+        self.distance = 0
+        self.sid_to_root = idNum
+
+        self.active_links = {}
+        self.ttl = 2^32 - 1
+
+        # self.active_links = set(neighbors)  # Initially, all links are active
+        # self.neighbor_info = {neighbor: {'root': neighbor, 'distance': 0} for neighbor in neighbors}
+
+    def check_should_update_current(self, incoming_msg: Message):
+
+        if incoming_msg.distance <= incoming_msg.distance:
+            pass
+        if incoming_msg.root <= self.root:
+            pass
+        if incoming_msg.origin <= self.switchID:
+            pass
+        if incoming_msg.pathThrough is False:
+            pass
+        if incoming_msg.ttl < self.ttl:
+            pass
+
+        return True
+
+    def process_message(self, incoming_msg: Message):
         """
         Processes the messages from other switches. Updates its own data (members),
         if necessary, and sends messages to its neighbors, as needed.
@@ -85,6 +110,105 @@ class Switch(StpSwitch):
         """
         # TODO: This function needs to accept an incoming message and process it accordingly.
         #      This function is called every time the switch receives a new message.
+
+
+        '''
+
+
+        # when to send messages to its neighbors?
+        1. set pathThrough = True only when
+            ?????????
+            1. When sending messages, pathThrough should only be TRUE if the
+                destinationID switch is the neighbor that the originID switch goes
+                through to get to the claimedRoot. Otherwise, pathThrough should
+                be FALSE
+
+
+                # pathThrough = 
+                # Boolean value indicating 
+                #   the path 
+                #       from the message’s origin
+                #       to the claimed root 
+                #   passes through the message’s destination
+                # how to check this??????????????
+
+                Message(claimed root, distance, origin switch, dest switch, pathThrough, ttl)
+                1. dest switch id is the neighbor
+                2. 
+
+
+        2. send until ttl > 0
+        '''
+
+        root = incoming_msg.root
+        distance = incoming_msg.distance
+        origin = incoming_msg.origin
+        destination = incoming_msg.destination
+        pathThrough = incoming_msg.pathThrough
+        ttl = incoming_msg.ttl
+
+        # self switch root info update
+        # 1. should update self.root
+        #     1. lower claimedRoot.
+        # 2. update self.distance 
+        #     1. root updated
+        #     2. shorter distance existing
+        
+        old_sid_to_root = self.sid_to_root
+        if incoming_msg.root < self.root: # 2-a-i
+            self.root = incoming_msg.root
+            self.distance = incoming_msg.distance + 1
+            self.sid_to_root = incoming_msg.origin
+        elif incoming_msg.root == self.root:
+            if incoming_msg.distance < self.distance: # 2-a-2
+                self.distance = incoming_msg.distance
+                self.sid_to_root = incoming_msg.origin
+            # 5-b-1: same root, distance equal, pick lower origin switch id    
+            elif incoming_msg.distance == self.distance: 
+                if incoming_msg.origin < self.sid_to_root:
+                    self.sid_to_root = incoming_msg.origin
+
+        # self active_links update
+        # 1. find a new path through a different neighbor
+        #     1. add the new link to active_links
+        #     2. remove the old link from active_links
+        # 2. if pathThrough = True
+        #     1. incoming_msg.origin not in active_links -> 
+        #         1. add incoming.origin to self.active_links
+        # 3. if pathThrough = False
+        #     1. incoming_msg.origin in self.active_links
+        #         1. remove incoming_msg.origin from self.active_links
+        #
+        if old_sid_to_root != self.sid_to_root:
+            self.active_links[self.sid_to_root] = True
+            if old_sid_to_root in self.active_links:
+                print('sid updated: ', old_sid_to_root, 'root:', self.root, self.sid_to_root, self.active_links, incoming_msg)
+                del self.active_links[old_sid_to_root]
+        elif pathThrough:
+            self.active_links[origin] = True
+        elif self.root is not root and origin in self.active_links:
+            print('false: ', self.switchID, 'root:', self.root, origin, self.active_links, incoming_msg)
+            del self.active_links[origin]
+
+        # TODO stop condition
+        if incoming_msg.ttl <= 0:
+            return
+        
+        for new_destination in self.links:
+
+            outgoing_msg = Message(self.root,
+                                   self.distance, 
+                                   self.switchID, 
+                                   new_destination, 
+                                   incoming_msg.pathThrough or self.root is new_destination, 
+                                   incoming_msg.ttl - 1)
+            self.send_message(outgoing_msg)
+            # print('curr_switch:: ', self.switchID)
+            # print('from [', incoming_msg.root, incoming_msg.distance, incoming_msg.origin, incoming_msg.destination, incoming_msg.pathThrough, incoming_msg.ttl, ']')
+            # print('self: ', self.root, self.distance, self.switchID, self.sid_to_root, self.active_links)
+            # print('to   [', outgoing_msg.root, outgoing_msg.distance, outgoing_msg.origin, outgoing_msg.destination, outgoing_msg.pathThrough, outgoing_msg.ttl, ']')
+            # print(f'>> {incoming_msg.origin} - {self.switchID} - {outgoing_msg.destination}')
+            # print('----')
 
     def generate_logstring(self):
         """
@@ -106,4 +230,7 @@ class Switch(StpSwitch):
         #      2 - 1, 2 - 3
         #
         #      A full example of a valid output file is included (Logs/) in the project skeleton.
-        return "# - #, # - #, # - #"
+
+        sorted_links = sorted(self.active_links)
+        print("log: ", self.switchID, self.active_links)
+        return ", ".join([f"{self.switchID} - {link}" for link in sorted_links])
