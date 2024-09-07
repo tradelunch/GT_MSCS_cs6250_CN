@@ -87,13 +87,13 @@ class Switch(StpSwitch):
         # self.neighbor_info = {neighbor: {'root': neighbor, 'distance': 0} for neighbor in neighbors}
 
     def print_self(self):
-        if self.switchID != 6:
-            return        
+        # if self.switchID != 6:
+        #     return        
         print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_to_root}, {self.ttl}]")
 
     def print_msg(self, msg: Message):
-        if self.switchID != 6:
-            return
+        # if self.switchID != 6:
+        #     return
         root = msg.root
         distance = msg.distance
         origin = msg.origin
@@ -118,6 +118,7 @@ class Switch(StpSwitch):
         self.active_links[id] = True
 
     def print_count(self):
+        print('==>> new')
         # global_vars.cnt += 1
         # print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
         pass
@@ -201,7 +202,7 @@ class Switch(StpSwitch):
         if pathThrough:
             self.add_active_link(origin, incoming_msg, 'pathThrough')
         else:
-            if self.sid_to_root != origin :
+            if self.root != root and self.sid_to_root != origin:
                 self.remove_active_link(origin, incoming_msg, 'pathThrough')
                 pass
 
