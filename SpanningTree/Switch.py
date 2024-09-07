@@ -83,17 +83,10 @@ class Switch(StpSwitch):
         self.active_links = {}
         self.ttl = None
 
-        # self.active_links = set(neighbors)  # Initially, all links are active
-        # self.neighbor_info = {neighbor: {'root': neighbor, 'distance': 0} for neighbor in neighbors}
-
-    def print_self(self):
-        # if self.switchID != 6:
-        #     return        
+    def print_self(self):  
         print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_to_root}, {self.ttl}]")
 
     def print_msg(self, msg: Message):
-        # if self.switchID != 6:
-        #     return
         root = msg.root
         distance = msg.distance
         origin = msg.origin
@@ -103,30 +96,29 @@ class Switch(StpSwitch):
 
         print(f"{self.switchID}: msg= [{root}, {distance}, {origin}, {destination}, {pathThrough}, {ttl}]")
 
-
     def remove_active_link(self, id, msg: Message, loc=''):
-        print(f'>> {self.switchID}: remove link: {id} {loc}')
-        self.print_msg(msg)
-        self.print_self()
+        # print(f'>> {self.switchID}: remove link: {id} {loc}')
+        # self.print_msg(msg)
+        # self.print_self()
         if id in self.active_links:
             del self.active_links[id]
     
     def add_active_link(self, id, msg: Message, loc = ''):   
-        print(f'>> {self.switchID}: add link: {id} {loc}')
-        self.print_msg(msg)        
-        self.print_self()
+        # print(f'>> {self.switchID}: add link: {id} {loc}')
+        # self.print_msg(msg)        
+        # self.print_self()
         self.active_links[id] = True
 
     def print_count(self):
-        print('==>> new')
+        # print('==>> new')
         # global_vars.cnt += 1
         # print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
         pass
 
     def process_message(self, incoming_msg: Message):
-        self.print_count()
-        self.print_msg(incoming_msg)
-        self.print_self()
+        # self.print_count()
+        # self.print_msg(incoming_msg)
+        # self.print_self()
 
         root = incoming_msg.root
         distance = incoming_msg.distance
@@ -151,7 +143,6 @@ class Switch(StpSwitch):
             - root updated
             - same root, but shorter path
         '''
-        old_sid_to_root = self.sid_to_root
         updated = False
         # incomming root lower -> self.root, self.distance update, self.sid_to_root
         if root < self.root:
@@ -207,9 +198,10 @@ class Switch(StpSwitch):
                 pass
 
 
-        self.print_self()
-        print('---', incoming_msg.ttl)
-        print('---')
+        # self.print_self()
+        # print('---', incoming_msg.ttl)
+        # print('---')
+
         # stop condition
         if incoming_msg.ttl <= 0:
             return
@@ -256,5 +248,5 @@ class Switch(StpSwitch):
         #      A full example of a valid output file is included (Logs/) in the project skeleton.
 
         sorted_links = sorted(self.active_links)
-        print("log: ", self.switchID, self.active_links)
+        # print("log: ", self.switchID, self.active_links)
         return ", ".join([f"{self.switchID} - {link}" for link in sorted_links])
