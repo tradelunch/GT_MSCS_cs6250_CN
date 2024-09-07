@@ -33,7 +33,7 @@
 from Message import Message
 from StpSwitch import StpSwitch
 
-import global_vars
+# import global_vars
 
 class Switch(StpSwitch):
     """
@@ -117,10 +117,13 @@ class Switch(StpSwitch):
         self.print_self()
         self.active_links[id] = True
 
-    def process_message(self, incoming_msg: Message):
+    def print_count(self):
+        # global_vars.cnt += 1
+        # print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
+        pass
 
-        global_vars.cnt += 1
-        print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
+    def process_message(self, incoming_msg: Message):
+        self.print_count()
         self.print_msg(incoming_msg)
         self.print_self()
 
