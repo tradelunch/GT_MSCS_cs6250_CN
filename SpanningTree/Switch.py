@@ -83,37 +83,10 @@ class Switch(StpSwitch):
         self.active_links = {}
         self.ttl = None
 
-    def print_self(self):  
-        print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_to_root}, {self.ttl}]")
-
-    def print_msg(self, msg: Message):
-        root = msg.root
-        distance = msg.distance
-        origin = msg.origin
-        destination = msg.destination
-        pathThrough = msg.pathThrough
-        ttl = msg.ttl
-
-        print(f"{self.switchID}: msg= [{root}, {distance}, {origin}, {destination}, {pathThrough}, {ttl}]")
-
-    def remove_active_link(self, id, msg: Message, loc=''):
-        # print(f'>> {self.switchID}: remove link: {id} {loc}')
-        # self.print_msg(msg)
-        # self.print_self()
-        if id in self.active_links:
-            del self.active_links[id]
-    
-    def add_active_link(self, id, msg: Message, loc = ''):   
-        # print(f'>> {self.switchID}: add link: {id} {loc}')
-        # self.print_msg(msg)        
-        # self.print_self()
-        self.active_links[id] = True
-
-    def print_count(self):
-        # print('==>> new')
-        # global_vars.cnt += 1
-        # print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
-        pass
+    def find_path_through(self, switch_id):
+        if self.sid_to_root == switch_id:
+            return True
+        return False
 
     def process_message(self, incoming_msg: Message):
         # self.print_count()
@@ -143,6 +116,7 @@ class Switch(StpSwitch):
             - root updated
             - same root, but shorter path
         '''
+        
         updated = False
         # incomming root lower -> self.root, self.distance update, self.sid_to_root
         if root < self.root:
@@ -193,7 +167,7 @@ class Switch(StpSwitch):
         if pathThrough:
             self.add_active_link(origin, incoming_msg, 'pathThrough')
         else:
-            if self.root != root and self.sid_to_root != origin:
+            if self.sid_to_root != origin:
                 self.remove_active_link(origin, incoming_msg, 'pathThrough')
                 pass
 
@@ -207,46 +181,48 @@ class Switch(StpSwitch):
             return
         
         for new_destination in self.links:
-
+            out_going_path_through = self.find_path_through(new_destination)
             outgoing_msg = Message(self.root,
                                    self.distance, 
                                    self.switchID, 
-                                   new_destination, 
-                                   
-                                self.root == root 
-                                and self.sid_to_root == new_destination,
-                                #    pathThrough or self.root is root, 
-                                #    self.root is new_destination, 
+                                   new_destination,
+                                   out_going_path_through,
                                    ttl - 1)
             self.send_message(outgoing_msg)
-            # print('curr_switch:: ', self.switchID)
-            # print('from [', incoming_msg.root, incoming_msg.distance, incoming_msg.origin, incoming_msg.destination, incoming_msg.pathThrough, incoming_msg.ttl, ']')
-            # print('self: ', self.root, self.distance, self.switchID, self.sid_to_root, self.active_links)
-            # print('to   [', outgoing_msg.root, outgoing_msg.distance, outgoing_msg.origin, outgoing_msg.destination, outgoing_msg.pathThrough, outgoing_msg.ttl, ']')
-            # print(f'>> {incoming_msg.origin} - {self.switchID} - {outgoing_msg.destination}')
-            # print('----')
 
     def generate_logstring(self):
-        """
-        Logs this Switch's list of Active Links in a SORTED order
-
-        returns a String of format:
-            SwitchID - ActiveLink1, SwitchID - ActiveLink2, etc.
-        """
-        # TODO: This function needs to return a logstring for this particular switch.  The
-        #      string represents the active forwarding links for this switch and is invoked
-        #      only after the simulation is complete.  Output the links included in the
-        #      spanning tree by INCREASING destination switch ID on a single line.
-        #
-        #      Print links as '(source switch id) - (destination switch id)', separating links
-        #      with a comma - ','.
-        #
-        #      For example, given a spanning tree (1 ----- 2 ----- 3), a correct output string
-        #      for switch 2 would have the following text:
-        #      2 - 1, 2 - 3
-        #
-        #      A full example of a valid output file is included (Logs/) in the project skeleton.
-
         sorted_links = sorted(self.active_links)
-        # print("log: ", self.switchID, self.active_links)
         return ", ".join([f"{self.switchID} - {link}" for link in sorted_links])
+
+    # util functions for my self
+    def print_self(self):  
+        print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_to_root}, {self.ttl}]")
+
+    def print_msg(self, msg: Message):
+        root = msg.root
+        distance = msg.distance
+        origin = msg.origin
+        destination = msg.destination
+        pathThrough = msg.pathThrough
+        ttl = msg.ttl
+
+        print(f"{self.switchID}: msg= [{root}, {distance}, {origin}, {destination}, {pathThrough}, {ttl}]")
+
+    def remove_active_link(self, id, msg: Message, loc=''):
+        # print(f'>> {self.switchID}: remove link: {id} {loc}')
+        # self.print_msg(msg)
+        # self.print_self()
+        if id in self.active_links:
+            del self.active_links[id]
+    
+    def add_active_link(self, id, msg: Message, loc = ''):   
+        # print(f'>> {self.switchID}: add link: {id} {loc}')
+        # self.print_msg(msg)        
+        # self.print_self()
+        self.active_links[id] = True
+
+    def print_count(self):
+        # print('==>> new')
+        # global_vars.cnt += 1
+        # print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
+        pass
