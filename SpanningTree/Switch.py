@@ -83,7 +83,7 @@ class Switch(StpSwitch):
         self.active_links = {}
         self.ttl = None
 
-    def find_path_through(self, sid_out_going):
+    def get_path_through(self, sid_out_going):
         if self.sid_pass_through == sid_out_going:
             return True
         return False
@@ -181,12 +181,11 @@ class Switch(StpSwitch):
             return
         
         for new_destination in self.links:
-            out_going_path_through = self.find_path_through(new_destination)
             outgoing_msg = Message(self.root,
                                    self.distance, 
                                    self.switchID, 
                                    new_destination,
-                                   out_going_path_through,
+                                   self.get_path_through(new_destination),
                                    ttl - 1)
             self.send_message(outgoing_msg)
 
