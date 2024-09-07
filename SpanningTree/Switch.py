@@ -33,6 +33,7 @@
 from Message import Message
 from StpSwitch import StpSwitch
 
+import global_vars
 
 class Switch(StpSwitch):
     """
@@ -85,45 +86,43 @@ class Switch(StpSwitch):
         # self.active_links = set(neighbors)  # Initially, all links are active
         # self.neighbor_info = {neighbor: {'root': neighbor, 'distance': 0} for neighbor in neighbors}
 
+    def print_self(self):
+        if self.switchID != 6:
+            return        
+        print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_to_root}, {self.ttl}]")
+
+    def print_msg(self, msg: Message):
+        if self.switchID != 6:
+            return
+        root = msg.root
+        distance = msg.distance
+        origin = msg.origin
+        destination = msg.destination
+        pathThrough = msg.pathThrough
+        ttl = msg.ttl
+
+        print(f"{self.switchID}: msg= [{root}, {distance}, {origin}, {destination}, {pathThrough}, {ttl}]")
+
+
+    def remove_active_link(self, id, msg: Message, loc=''):
+        print(f'>> {self.switchID}: remove link: {id} {loc}')
+        self.print_msg(msg)
+        self.print_self()
+        if id in self.active_links:
+            del self.active_links[id]
+    
+    def add_active_link(self, id, msg: Message, loc = ''):   
+        print(f'>> {self.switchID}: add link: {id} {loc}')
+        self.print_msg(msg)        
+        self.print_self()
+        self.active_links[id] = True
+
     def process_message(self, incoming_msg: Message):
-        """
-        Processes the messages from other switches. Updates its own data (members),
-        if necessary, and sends messages to its neighbors, as needed.
 
-        message: Message
-            the Message received from other Switches
-        """
-        # TODO: This function needs to accept an incoming message and process it accordingly.
-        #      This function is called every time the switch receives a new message.
-
-
-        '''
-
-
-        # when to send messages to its neighbors?
-        1. set pathThrough = True only when
-            ?????????
-            1. When sending messages, pathThrough should only be TRUE if the
-                destinationID switch is the neighbor that the originID switch goes
-                through to get to the claimedRoot. Otherwise, pathThrough should
-                be FALSE
-
-
-                # pathThrough = 
-                # Boolean value indicating 
-                #   the path 
-                #       from the message’s origin
-                #       to the claimed root 
-                #   passes through the message’s destination
-                # how to check this??????????????
-
-                Message(claimed root, distance, origin switch, dest switch, pathThrough, ttl)
-                1. dest switch id is the neighbor
-                2. 
-
-
-        2. send until ttl > 0
-        '''
+        global_vars.cnt += 1
+        print(f'# {global_vars.cnt}: {incoming_msg.origin}->{incoming_msg.destination} ###')
+        self.print_msg(incoming_msg)
+        self.print_self()
 
         root = incoming_msg.root
         distance = incoming_msg.distance
@@ -152,21 +151,32 @@ class Switch(StpSwitch):
         updated = False
         # incomming root lower -> self.root, self.distance update, self.sid_to_root
         if root < self.root:
+            self.remove_active_link(self.sid_to_root, incoming_msg, 'root')
+            self.add_active_link(origin, incoming_msg, 'root')
+            
             self.root = root
-            self.distance = distance
+            self.distance = distance + 1
+
+            # update active link
             self.sid_to_root = origin
             updated = True
         elif root == self.root:
             # 2-a-2
             # root sanme, distance shorter -> self.distance, self.sid_to_root
-            if distance < self.distance: 
-                self.distance = distance
+            if distance + 1 < self.distance: 
+                self.distance = distance + 1
+                self.remove_active_link(self.sid_to_root, incoming_msg, 'shorter path')
+                self.add_active_link(origin, incoming_msg, 'shorter path')
+
                 self.sid_to_root = origin
                 updated = True
             # 5-b-1
             # root same, distance same, origin small -> self.sid_to_root
-            elif distance  == self.distance:
+            elif distance + 1 == self.distance:
                 if origin < self.sid_to_root:
+                    self.remove_active_link(self.sid_to_root, incoming_msg, 'lower sid')
+                    self.add_active_link(origin, incoming_msg, 'lower sid')
+
                     self.sid_to_root = origin
                     updated = True
 
@@ -181,27 +191,22 @@ class Switch(StpSwitch):
         #     1. incoming_msg.origin in self.active_links
         #         1. remove incoming_msg.origin from self.active_links
         #
-        
-        if (self.sid_to_root is 5 or self.sid_to_root is 6) and (origin is 5 or origin is 6):
-            print(f"Received message: root={root}, distance={distance}, origin={origin}, destination={destination}, pathThrough={pathThrough}, ttl={ttl}")
-            print(f"Updated active links: from: {origin}, {self.active_links}")
-        
-        
-        
-        if old_sid_to_root != self.sid_to_root:
-            self.active_links[self.sid_to_root] = True
-            if old_sid_to_root in self.active_links:
-                # print('sid updated: ', old_sid_to_root, 'root:', self.root, self.sid_to_root, self.active_links, incoming_msg)
-                del self.active_links[old_sid_to_root]
-        elif pathThrough:
-            self.active_links[origin] = True
-        elif self.root is not root and origin in self.active_links:
-        # elif origin in self.active_links:
-            # print('false: ', self.switchID, 'root:', self.root, origin, self.active_links, incoming_msg)
-            del self.active_links[origin]
+
+        if updated:
+            self.ttl = ttl
+
+        if pathThrough:
+            self.add_active_link(origin, incoming_msg, 'pathThrough')
+        else:
+            if self.sid_to_root != origin :
+                self.remove_active_link(origin, incoming_msg, 'pathThrough')
+                pass
 
 
-        # TODO stop condition
+        self.print_self()
+        print('---', incoming_msg.ttl)
+        print('---')
+        # stop condition
         if incoming_msg.ttl <= 0:
             return
         
@@ -211,8 +216,12 @@ class Switch(StpSwitch):
                                    self.distance, 
                                    self.switchID, 
                                    new_destination, 
-                                   incoming_msg.pathThrough or self.root is new_destination, 
-                                   incoming_msg.ttl - 1)
+                                   
+                                self.root == root 
+                                and self.sid_to_root == new_destination,
+                                #    pathThrough or self.root is root, 
+                                #    self.root is new_destination, 
+                                   ttl - 1)
             self.send_message(outgoing_msg)
             # print('curr_switch:: ', self.switchID)
             # print('from [', incoming_msg.root, incoming_msg.distance, incoming_msg.origin, incoming_msg.destination, incoming_msg.pathThrough, incoming_msg.ttl, ']')
