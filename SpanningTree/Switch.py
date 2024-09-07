@@ -78,13 +78,13 @@ class Switch(StpSwitch):
 
         self.root = idNum
         self.distance = 0
-        self.sid_to_root = idNum
+        self.sid_pass_through = idNum
 
         self.active_links = {}
         self.ttl = None
 
-    def find_path_through(self, switch_id):
-        if self.sid_to_root == switch_id:
+    def find_path_through(self, sid_out_going):
+        if self.sid_pass_through == sid_out_going:
             return True
         return False
 
@@ -120,33 +120,33 @@ class Switch(StpSwitch):
         updated = False
         # incomming root lower -> self.root, self.distance update, self.sid_to_root
         if root < self.root:
-            self.remove_active_link(self.sid_to_root, incoming_msg, 'root')
+            self.remove_active_link(self.sid_pass_through, incoming_msg, 'root')
             self.add_active_link(origin, incoming_msg, 'root')
             
             self.root = root
             self.distance = distance + 1
 
             # update active link
-            self.sid_to_root = origin
+            self.sid_pass_through = origin
             updated = True
         elif root == self.root:
             # 2-a-2
             # root sanme, distance shorter -> self.distance, self.sid_to_root
             if distance + 1 < self.distance: 
                 self.distance = distance + 1
-                self.remove_active_link(self.sid_to_root, incoming_msg, 'shorter path')
+                self.remove_active_link(self.sid_pass_through, incoming_msg, 'shorter path')
                 self.add_active_link(origin, incoming_msg, 'shorter path')
 
-                self.sid_to_root = origin
+                self.sid_pass_through = origin
                 updated = True
             # 5-b-1
             # root same, distance same, origin small -> self.sid_to_root
             elif distance + 1 == self.distance:
-                if origin < self.sid_to_root:
-                    self.remove_active_link(self.sid_to_root, incoming_msg, 'lower sid')
+                if origin < self.sid_pass_through:
+                    self.remove_active_link(self.sid_pass_through, incoming_msg, 'lower sid')
                     self.add_active_link(origin, incoming_msg, 'lower sid')
 
-                    self.sid_to_root = origin
+                    self.sid_pass_through = origin
                     updated = True
 
         # self active_links update
@@ -167,7 +167,7 @@ class Switch(StpSwitch):
         if pathThrough:
             self.add_active_link(origin, incoming_msg, 'pathThrough')
         else:
-            if self.sid_to_root != origin:
+            if self.sid_pass_through != origin:
                 self.remove_active_link(origin, incoming_msg, 'pathThrough')
                 pass
 
@@ -196,7 +196,7 @@ class Switch(StpSwitch):
 
     # util functions for my self
     def print_self(self):  
-        print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_to_root}, {self.ttl}]")
+        print(f"{self.switchID}:", f"self=[{self.root}: {self.distance}, {self.switchID}, {self.active_links}, {self.sid_pass_through}, {self.ttl}]")
 
     def print_msg(self, msg: Message):
         root = msg.root
