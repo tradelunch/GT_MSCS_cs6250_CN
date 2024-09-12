@@ -1,0 +1,9 @@
+[submodule "cs6250_pr2"]
+	path = cs6250_pr2
+	url = git@github.com:tradelunch/cs6250_pr1.git
+[submodule "cs6250_pr0"]
+	path = cs6250_pr0
+	url = git@github.com:tradelunch/cs6250_pr0.git
+[submodule "cs6250_pr1"]
+	path = cs6250_pr1
+	url = git@github.com:tradelunch/cs6250_pr1.git
