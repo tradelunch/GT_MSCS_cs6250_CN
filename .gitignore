@@ -164,3 +164,9 @@ cython_debug/
 
 # mac os
 **/.idea/
+.DS_Store
+
+# class
+**/_00_test_*
+**/_00__setup_virtual_*/
+**/ssh_key_mini/
