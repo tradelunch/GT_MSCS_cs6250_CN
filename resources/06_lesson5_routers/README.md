@@ -8,4 +8,8 @@ Survey and Taxonomy of IP Address Lookup Algorithms
 
 Kurose-Ross, 6th Edition, Section 4.3
 Kurose-Ross, 7th Edition, Section 4.2
-Varghese, Network Algorithmics, Sections: 1.1.2,  2.3.2,  Chapter 11
+Varghese, Network Algorithmics, Sections: 1.1.2, 2.3.2, Chapter 11
+
+## quiz
+
+[quiz 5](https://quizlet.com/727812833/lesson-5-router-design-and-algorithms-flash-cards/)
