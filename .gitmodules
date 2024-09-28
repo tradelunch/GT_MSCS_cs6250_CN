@@ -7,3 +7,6 @@
 [submodule "cs6250_pr1"]
 	path = cs6250_pr1
 	url = git@github.com:tradelunch/cs6250_pr1.git
+[submodule "cs6250_pr3_SDN_firewall"]
+	path = cs6250_pr3_SDN_firewall
+	url = https://github.com/tradelunch/cs6250_pr3_SDN_firewall.git
