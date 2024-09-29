@@ -13,3 +13,6 @@
 [submodule "cs6250_quzi_exam"]
 	path = cs6250_quzi_exam
 	url = https://github.com/tradelunch/cs6250_quiz_exam.git
+[submodule "cs6250_quiz_exam"]
+	path = cs6250_quiz_exam
+	url = git@github.com:tradelunch/cs6250_quiz_exam.git
