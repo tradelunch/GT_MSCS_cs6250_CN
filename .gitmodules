@@ -1,3 +1,6 @@
+[submodule "cs6250_exams"]
+	path = cs6250_exams
+	url = https://github.com/tradelunch/cs6250_exams.git
 [submodule "cs6250_pr2"]
 	path = cs6250_pr2
 	url = git@github.com:tradelunch/cs6250_pr2.git
@@ -10,9 +13,4 @@
 [submodule "cs6250_pr3_SDN_firewall"]
 	path = cs6250_pr3_SDN_firewall
 	url = https://github.com/tradelunch/cs6250_pr3_SDN_firewall.git
-[submodule "cs6250_quzi_exam"]
-	path = cs6250_quzi_exam
-	url = https://github.com/tradelunch/cs6250_quiz_exam.git
-[submodule "cs6250_quiz_exam"]
-	path = cs6250_quiz_exam
-	url = git@github.com:tradelunch/cs6250_quiz_exam.git
+
