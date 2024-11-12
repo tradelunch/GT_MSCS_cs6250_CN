@@ -17,3 +17,6 @@
 [submodule "cs6250_pr4_BGP_Hijacking"]
 	path = cs6250_pr4_BGP_Hijacking
 	url = git@github.com:tradelunch/cs6250_pr4_BGP_Highjacking.git
+[submodule "cs6250_pr5_BGP_Measurement"]
+	path = cs6250_pr5_BGP_Measurement
+	url = git@github.com:tradelunch/cs6250_pr5_BGP_Measurements.git
