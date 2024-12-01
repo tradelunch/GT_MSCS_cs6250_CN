@@ -20,3 +20,6 @@
 [submodule "cs6250_pr5_BGP_Measurement"]
 	path = cs6250_pr5_BGP_Measurement
 	url = git@github.com:tradelunch/cs6250_pr5_BGP_Measurements.git
+[submodule "cs6250_pr_extra_credit"]
+	path = cs6250_pr_extra_credit
+	url = git@github.com:tradelunch/cs6250_pr_extra_credit.git
