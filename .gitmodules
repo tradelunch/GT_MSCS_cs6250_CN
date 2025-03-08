@@ -1,25 +1,25 @@
 [submodule "cs6250_exams"]
 	path = cs6250_exams
-	url = https://github.com/tradelunch/cs6250_exams.git
+	url = https://github.com/tradelunch/GT_MSCS_cs6250_exams.git
 [submodule "cs6250_pr2"]
 	path = cs6250_pr2
-	url = git@github.com:tradelunch/cs6250_pr2.git
+	url = git@github.com:tradelunch/GT_MSCS_cs6250_pr2.git
 [submodule "cs6250_pr0"]
 	path = cs6250_pr0
-	url = git@github.com:tradelunch/cs6250_pr0.git
+	url = git@github.com:tradelunch/GT_MSCS_cs6250_pr0.git
 [submodule "cs6250_pr1"]
 	path = cs6250_pr1
-	url = git@github.com:tradelunch/cs6250_pr1.git
+	url = git@github.com:tradelunch/GT_MSCS_cs6250_pr1.git
 [submodule "cs6250_pr3_SDN_firewall"]
 	path = cs6250_pr3_SDN_firewall
-	url = https://github.com/tradelunch/cs6250_pr3_SDN_firewall.git
+	url = https://github.com/tradelunch/GT_MSCS_cs6250_pr3_SDN_firewall.git
 
 [submodule "cs6250_pr4_BGP_Hijacking"]
 	path = cs6250_pr4_BGP_Hijacking
-	url = git@github.com:tradelunch/cs6250_pr4_BGP_Highjacking.git
+	url = git@github.com:tradelunch/GT_MSCS_cs6250_pr4_BGP_Highjacking.git
 [submodule "cs6250_pr5_BGP_Measurement"]
 	path = cs6250_pr5_BGP_Measurement
-	url = git@github.com:tradelunch/cs6250_pr5_BGP_Measurements.git
+	url = git@github.com:tradelunch/GT_MSCS_cs6250_pr5_BGP_Measurements.git
 [submodule "cs6250_pr_extra_credit"]
 	path = cs6250_pr_extra_credit
-	url = git@github.com:tradelunch/cs6250_pr_extra_credit.git
+	url = git@github.com:tradelunch/GT_MSCS_cs6250_pr_extra_credit.git
